@@ -5,6 +5,7 @@
 {% load humanize %}
 <html lang="en">
   <head>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -25,21 +26,34 @@
     {% include 'navbar.html' %}   
     <div class="container-fluid h-100">
       <div class="row">
-        <div id="sidebar" class="col-lg-3 col-md-3 d-none d-lg-block d-md-block position-fixed h-100">
+        <div id="sidebar" class="col-lg-3 col-md-3 d-none d-lg-block d-md-block">
           <div>
             <h3>Notes <a id="a_d" class="btn float-right" style="font-size: 25px; color: blue; padding-top: 0;"  data-toggle="modal" data-target="#add_note"><i class="fas fa-plus" data-toggle="tooltip" title="Add a new note"></i></a></h3>
             <input type="text" id="search_note" class="form-control" placeholder="Search">
-            </div>
-            <hr>
-            <ul class="nav nav-pills flex-column">
-              {% for note in notes %}
-              <li class="nav-item" id="note_details">
-                <a href="{% url 'note_detail' note.slug %}" class="{% add_active request 'note_detail' note.slug %} nav-link"><span style="text-decoration: none !important;">{{ note.note_title|truncatechars:24 }}</a>
-              </li>
-              {% endfor %}
-            </ul>
+          </div>
+            {% for project in projects %}
+              <hr>
+              <a data-toggle="collapse" href="#collapse-{{project}}">>>>>{{ project|truncatechars:6 }}</a>
+              <div id="collapse-{{project}}" class="panel-collapse collapse">
+                <div class="panel-body" style="padding-left: 0px;">
+                  <a href="/project/{{ project }}/timeline" class="nav-link" style="text-decoration: none !important;">
+                  Timeline
+                  </a>
+                </div>
+                {% for note in notes %}
+                {% if note.project == project %}
+                {% if note.timeline %}
+                {% else %}
+                  <div class="panel-body" style="padding-left: 0px;">
+                    <a href="{% url 'note_detail' note.slug %}" class="{% add_active request 'note_detail' note.slug %} nav-link"><span style="text-decoration: none !important;">{{ note.note_title|truncatechars:24 }}</a>
+                  </div>
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+              </div>
+            {% endfor %}
         </div>
-        <div class="col-lg-9 col-md-9 offset-md-3 col-sm-12 col-xs-12" style="padding-top: 1%; padding-left: 0; padding-right: 0;">
+        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12" style="position:relative; padding-top: 1%; padding-left: 0; padding-right: 0;">
           {% block content %}
           {% endblock %}
         </div>
@@ -48,6 +62,8 @@
 
     <div class="edit-modal-div"></div>
     <div class="delete-modal-div"></div>
+    <div class="delete-account-div"></div>
+    <div class="delete-file-div"></div>
 
     <!-- Add Modal -->
     <div class="modal fade" id="add_note">
@@ -84,7 +100,7 @@
         </div>
       </div>
     </div>
-
+    
     <!-- Loader Div -->
     <div class="loader"></div>
     <!-- Optional JavaScript -->
@@ -185,25 +201,62 @@
     });
     </script>
 
-    <script>
-        var modalDiv = $(".delete-modal-div");
-        $(".open-delete-modal").on("click", function() {
-        $.ajax({
-            type: 'GET',
-            url: $(this).attr("data-url"),
-            beforeSend: function() {
-                $(".loader").show();
-            },
-            success: function(data) {
-                modalDiv.html(data);
-                $(".loader").hide();
-                $("#delete_note_confirmation").modal();
-            }
-        });
-        });
-    </script>
+<script>
+  var modalDiv = $(".delete-modal-div");
+  $(".open-delete-modal").on("click", function() {
+  $.ajax({
+      type: 'GET',
+      url: $(this).attr("data-url"),
+      beforeSend: function() {
+          $(".loader").show();
+      },
+      success: function(data) {
+          modalDiv.html(data);
+          $(".loader").hide();
+          $("#delete_note_confirmation").modal();
+      }
+  });
+  });
+</script>
 
-    <script>
+<script>
+  var modalDiv = $(".delete-account-div");
+  $(".open-delete-account").on("click", function() {
+  $.ajax({
+      type: 'GET',
+      url: $(this).attr("data-url"),
+      beforeSend: function() {
+          $(".loader").show();
+      },
+      success: function(data) {
+          modalDiv.html(data);
+          $(".loader").hide();
+          $("#delete_account_confirmation").modal();
+      }
+  });
+  });
+</script>
+
+<script>
+  var modalDiv = $(".delete-file-div");
+  $(".open-delete-file").on("click", function() {
+  $.ajax({
+      type: 'GET',
+      url: $(this).attr("data-url"),
+      beforeSend: function() {
+          $(".loader").show();
+      },
+      success: function(data) {
+          modalDiv.html(data);
+          $(".loader").hide();
+          $("#delete_file_confirmation").modal();
+      }
+  });
+  });
+</script>
+
+
+<script>
         var modalDiv = $(".edit-modal-div");
         $(".open-modal").on("click", function() {
         $.ajax({

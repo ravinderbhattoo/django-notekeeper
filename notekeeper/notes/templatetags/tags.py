@@ -6,3 +6,4 @@ register = template.Library()
 def add_css(field, css):
     """Removes all values of arg from the given string"""
     return field.as_widget(attrs={"class": css})
+

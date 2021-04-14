@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'taggit',
     'accounts',
     'notes',
+    'attachments',
 ]
 
 MIDDLEWARE = [

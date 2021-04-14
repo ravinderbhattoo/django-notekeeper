@@ -8,7 +8,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form method="POST" action="{% url 'note_details_edit' form.instance.id %}">
+            <form method="POST" action="{% url 'note_details_edit' form.instance.id %}" enctype="multipart/form-data">
                 <div class="modal-body">
                     {% csrf_token %}
                     {{ form.media }}

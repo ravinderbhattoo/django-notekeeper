@@ -1,0 +1,63 @@
+{% extends 'public_base.html' %}
+{% load humanize %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="container">{% include 'messages.html' %}</div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 text-center">
+            <h2><b>All Projects</b></h2>
+        </div>
+    </div>
+
+    <div class="row" id="notes-homepage" style="margin-bottom: 2%;">
+        
+        {% for proj in projects %}
+        <h4><b>{{ proj }}</b></h4>
+        <div class="col-lg-12 col-md-12 col-sm-12", style="max-height: 400px; overflow:auto;">
+            <table class="table table-striped table-bordered" id="table-{{ proj }}">
+                <thead class="thead-dark">
+                    <tr class="text-center">
+                        <th scope="col">Title</th>
+                        <th scope="col">Files</th>
+                        <th scope="col">Owner</th>
+                        <th scope="col">Last Updated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for note, files in attachs.items %}
+                {% if note.project == proj %}
+                {% if note.timeline %}
+                {% else %}
+                    <tr>
+                        <td><a href="{% url 'note_detail' note.slug %}">{{ note.note_title|truncatechars:25 }}</a></td>
+                        <td>
+                            <ol>
+                            {% for nfile in files %}
+                                <li><a href="/media/{{ nfile.file }}">{{ nfile.file }} </a> </li>
+                            {% endfor %}
+                            </ol>
+                        </td>
+                        <td>{{ note.user.username }}</td>
+                        <td>{{ note.updated_at|naturaltime }}</td>
+                    </tr>
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+            {% block javascript %}
+            <!-- <script>
+            $('#table-{{ proj }}').DataTable({
+                "order": []
+                });
+            </script> -->
+            {% endblock %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+

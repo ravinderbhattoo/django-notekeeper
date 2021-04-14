@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+{% load active %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="container">{% include 'messages.html' %}</div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 text-center">
+            <h2><b>{{ proj }}</b></h2>
+            <h3><b>Timeline</b></h3>
+            <a href="{% url 'timeline_as_zip' proj %}" style="text-decoration: none; color: white" data-toggle="tooltip" title="Download Timeline as ZIP">    
+                <span class="btn btn-primary" style="border-radius: 0;"><i class="fa fa-download"> </i></span>
+            </a>
+
+        </div>
+    </div>
+
+    <div class="row" id="notes-homepage" style="margin-bottom: 2%;">
+</div>
+
+{% for note, files in attachs.items %}
+<div class="container" id="notes" style="padding-bottom:1cm;">
+    <div class="row">
+        <div class="col-lg-12 col-md-12">
+            {% if note.timeline %}
+                <div class="row">
+                    <h3 class="col-9" style="width: 100%; word-wrap: break-word;">
+                        <p class="text-wrap" >
+                            <a href="{% url 'note_detail' note.slug %}">{{ note.note_title }}</a>
+
+                        </p>
+                    </h3>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <p style="color: gray; font-size: 15px;">
+                            Last Updated: {{ note.updated_at|naturaltime }} <br>
+                        </p>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <p style="color: gray; font-size: 15px;">
+                            Created: {{ note.created_at|naturaltime }} <br>
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        {% for tag in note.tags.all %}
+                            <a href="{% url 'get_all_notes_tags' tag.slug %}"><span class="badge badge-primary">{{ tag.name }}</span></a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-12" style="overflow-wrap: break-word; text-align: justify">
+                        {{ note.get_message_as_markdown }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12" style="overflow-wrap: break-word">
+                        <span class="col-1">
+                            <div class="float-left d-none d-md-block d-lg-block">
+                                <a class="open-modal" data-url="/notes/{{note.id}}/edit/attach" style="text-decoration: none; color: white" data-toggle="tooltip" title="Add attachment">    
+                                    <span class="btn" style="border-radius:0;"><i class="far fa-edit"> </i> Attachments</span>                                    
+                                </a>
+                                <a data-toggle="collapse" href="#collapse-{{note.id}}">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </div>
+                            <ul class="navbar-nav d-md-none d-lg-none d-sm-block d-xs-block">
+                                <li class="nav-item dropdown dropleft">
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="open-modal dropdown-item" data-url="/notes/{{note.id}}/edit/attach" style="text-decoration: none; color: white" data-toggle="tooltip" title="Add attachment">    
+                                            <span class="btn btn-block" style="border-radius: 0;"><i class="far fa-edit"></i>Attachments</span>
+                                        </a>
+                                        <a data-toggle="collapse" href="#collapse-{{note.id}}">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </span>
+                        <ol>
+                            <br>
+                            {% if files|length != 0 %}
+                            {% for nfile in files %}
+                            <li>
+                                <a href="/media/{{ nfile.file }}">{{ nfile.file }} </a>
+                                <a href="/notes/{{ note.id }}/delete/{{ nfile.id }}/attach" style="color:red">remove</a>
+                            </li>
+                            <div id="collapse-{{note.id}}" class="panel-collapse collapse">
+                                <img src="/media/{{ nfile.file | ext_image }}" style="height:400px;width:auto;max-width:600px;" onerror="this.style.display='none'"/>
+                            </div>    
+                            </ul>
+                            {% endfor %}
+                            {% endif %}
+                        </ol>
+                    </div>
+                </div>
+                {% endif %}
+        </div>
+    </div>
+</div> 
+
+<!-- Delete Note Modal -->
+<div class="modal fade" id="delete_note_confirmation">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <h4 class="modal-title">Confirm Deletion</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+            <div class="row container">
+                <h5>Are you sure you want to delete "{{ note_detail.note_title }}"?</h5>
+            </div>
+        </div>
+
+        <!-- Modal footer -->
+        <div class="modal-footer">
+            <input type="submit" class="btn btn-primary" data-dismiss="modal" value="Cancel">
+            <button type="button" class="btn btn-danger"><a href="{% url 'delete_note' note.id %}" style="text-decoration: none; color: white">Delete</a></button>
+        </div>
+        </div>
+    </div>
+</div>
+
+
+{% endfor %}
+{% endblock %}
+

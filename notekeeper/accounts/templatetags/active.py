@@ -9,7 +9,6 @@ def add_active(request, name, slug):
         path = reverse(name, kwargs={'slug': slug})
     else :
         path = reverse(name)
-    print(path)
     if request.path == path:
         return "active"
     return ""

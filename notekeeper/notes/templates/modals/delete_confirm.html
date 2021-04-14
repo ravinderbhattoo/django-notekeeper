@@ -1,5 +1,5 @@
 <!-- Delete Note Modal -->
-<div class="modal fade" id="delete_note_confirmation">
+<div class="modal fade" id="{{ id }}">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
 
@@ -12,14 +12,14 @@
         <!-- Modal body -->
         <div class="modal-body">
             <div class="row container">
-                <h5>Are you sure you want to delete "{{ note_detail.note_title }}"?</h5>
+                <h5>Are you sure you want to delete "{{ data }}"?</h5>
             </div>
         </div>
 
         <!-- Modal footer -->
         <div class="modal-footer">
             <input type="submit" class="btn btn-primary" data-dismiss="modal" value="Cancel">
-            <button type="button" class="btn btn-danger" name="delete_note"><a href="{% url 'delete_single_note' note_detail.id %}" style="text-decoration: none; color: white">Delete</a></button>
+            <button type="button" class="btn btn-danger" name="delete_note"><a href="{% url url0  itemid %}" style="text-decoration: none; color: white">Delete</a></button>
         </div>
 
         </div>
